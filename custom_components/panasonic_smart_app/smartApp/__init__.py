@@ -28,6 +28,7 @@ from .utils import chunks
 from . import urls
 
 _LOGGER = logging.getLogger(__name__)
+PROXY_URL = 'otzro:paxkqxetf@geo.iproyal.com:12321'
 
 
 def tryApiStatus(func):
@@ -64,9 +65,10 @@ def delay(func):
 
 
 class SmartApp(object):
-    def __init__(self, session, account, password):
+    def __init__(self, session, account, password, proxy=None):
         self.account = account
         self.password = password
+        self._proxy = proxy
         self._session = session
         self._devices = []
         self._commands = []
@@ -248,6 +250,7 @@ class SmartApp(object):
                 params=params,
                 headers=headers,
                 timeout=REQUEST_TIMEOUT,
+                proxy=self._proxy,
             )
         except:
             auth = headers.get("auth", None)
