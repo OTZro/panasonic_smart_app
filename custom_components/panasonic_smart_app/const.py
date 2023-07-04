@@ -9,7 +9,7 @@ from homeassistant.components.climate.const import (
     HVAC_MODE_FAN_ONLY,
 )
 
-DOMAIN = "panasonic_smart_app"
+DOMAIN = "panasonic_smart_app_chang"
 PLATFORMS = [
     "humidifier",
     "sensor",
