@@ -171,42 +171,20 @@ async def async_setup_entry(hass, entry, async_add_entities) -> bool:
                     )
 
         if device_type == DEVICE_TYPE_WASHING_MACHINE:
-            if "0x13" in device_status:
-                sensors.append(
-                    PanasonicWashingCountdownSensor(
-                        coordinator,
-                        index,
-                        client,
-                        device,
-                    )
-                )
-            if "0x50" in device_status:
-                sensors.append(
-                    PanasonicWashingStatusSensor(
-                        coordinator,
-                        index,
-                        client,
-                        device,
-                    )
-                )
-            if "0x54" in device_status:
-                sensors.append(
-                    PanasonicWashingModeSensor(
-                        coordinator,
-                        index,
-                        client,
-                        device,
-                    )
-                )
-            if "0x55" in device_status:
-                sensors.append(
-                    PanasonicWashingCycleSensor(
-                        coordinator,
-                        index,
-                        client,
-                        device,
-                    )
-                )
+            # Washing machine sensors are registered unconditionally based on
+            # device type. Status keys (0x13/0x50/0x54/0x55) are often absent
+            # from the API response while the machine is idle, so gating entity
+            # creation on key presence means the entities never exist until the
+            # machine runs and the integration is manually reloaded. Each
+            # sensor's state property already returns STATE_UNAVAILABLE when
+            # its key is missing.
+            for sensor_cls in (
+                PanasonicWashingCountdownSensor,
+                PanasonicWashingStatusSensor,
+                PanasonicWashingModeSensor,
+                PanasonicWashingCycleSensor,
+            ):
+                sensors.append(sensor_cls(coordinator, index, client, device))
 
         if device_type == DEVICE_TYPE_PURIFIER:
             if "0x50" in device_status:
